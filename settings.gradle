@@ -1,5 +1,7 @@
 pluginManagement {
 	repositories {
+		// 添加aliyun的maven仓库
+		maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
 		gradlePluginPortal()
 		maven { url 'https://repo.spring.io/plugins-release' }
 	}
