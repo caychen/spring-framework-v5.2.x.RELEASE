@@ -32,9 +32,11 @@ public class ContextNamespaceHandler extends NamespaceHandlerSupport {
 
 	@Override
 	public void init() {
+		// PropertyPlaceholderBeanDefinitionParser会向容器中注册一个PropertySourcesPlaceholderConfigurer的BeanDefinition
 		registerBeanDefinitionParser("property-placeholder", new PropertyPlaceholderBeanDefinitionParser());
 		registerBeanDefinitionParser("property-override", new PropertyOverrideBeanDefinitionParser());
 		registerBeanDefinitionParser("annotation-config", new AnnotationConfigBeanDefinitionParser());
+		// ComponentScanBeanDefinitionParser会向容器中注册BeanDefinitionRegistryPostProcessor的BeanDefinition，为ConfigurationClassPostProcessor的BDRPP
 		registerBeanDefinitionParser("component-scan", new ComponentScanBeanDefinitionParser());
 		registerBeanDefinitionParser("load-time-weaver", new LoadTimeWeaverBeanDefinitionParser());
 		registerBeanDefinitionParser("spring-configured", new SpringConfiguredBeanDefinitionParser());

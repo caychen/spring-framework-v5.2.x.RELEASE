@@ -16,14 +16,6 @@
 
 package org.springframework.context.annotation;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -43,6 +35,13 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.lang.annotation.Annotation;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Parser for the {@code <context:component-scan/>} element.
@@ -80,14 +79,19 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 	@Override
 	@Nullable
 	public BeanDefinition parse(Element element, ParserContext parserContext) {
+		//获取扫描包路径
 		String basePackage = element.getAttribute(BASE_PACKAGE_ATTRIBUTE);
+		// 解析占位符
 		basePackage = parserContext.getReaderContext().getEnvironment().resolvePlaceholders(basePackage);
 		String[] basePackages = StringUtils.tokenizeToStringArray(basePackage,
 				ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
 
 		// Actually scan for bean definitions and register them.
+		// 返回扫描到的bean定义集合
 		ClassPathBeanDefinitionScanner scanner = configureScanner(parserContext, element);
+		// 扫描包路径并返回bean定义集合
 		Set<BeanDefinitionHolder> beanDefinitions = scanner.doScan(basePackages);
+		// 注册组件
 		registerComponents(parserContext.getReaderContext(), beanDefinitions, element);
 
 		return null;
@@ -100,6 +104,7 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 		}
 
 		// Delegate bean definition registration to scanner class.
+		// 创建扫描器
 		ClassPathBeanDefinitionScanner scanner = createScanner(parserContext.getReaderContext(), useDefaultFilters);
 		scanner.setBeanDefinitionDefaults(parserContext.getDelegate().getBeanDefinitionDefaults());
 		scanner.setAutowireCandidatePatterns(parserContext.getDelegate().getAutowireCandidatePatterns());
@@ -128,6 +133,7 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 	}
 
 	protected ClassPathBeanDefinitionScanner createScanner(XmlReaderContext readerContext, boolean useDefaultFilters) {
+		// 创建classpahtBeanDefinitionScanner扫描器
 		return new ClassPathBeanDefinitionScanner(readerContext.getRegistry(), useDefaultFilters,
 				readerContext.getEnvironment(), readerContext.getResourceLoader());
 	}
@@ -144,10 +150,15 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 
 		// Register annotation config processors, if necessary.
 		boolean annotationConfig = true;
+		// 解析annotation-config属性是否为true，默认为true
 		if (element.hasAttribute(ANNOTATION_CONFIG_ATTRIBUTE)) {
 			annotationConfig = Boolean.parseBoolean(element.getAttribute(ANNOTATION_CONFIG_ATTRIBUTE));
 		}
 		if (annotationConfig) {
+			//如果为true，则向容器中注册几个重要的类：
+			// ConfigurationClassPostProcessor（BDRPP）
+			// AutowiredAnnotationBeanPostProcessor（BPP）
+			// CommonAnnotationBeanPostProcessor（BPP）
 			Set<BeanDefinitionHolder> processorDefinitions =
 					AnnotationConfigUtils.registerAnnotationConfigProcessors(readerContext.getRegistry(), source);
 			for (BeanDefinitionHolder processorDefinition : processorDefinitions) {

@@ -250,7 +250,7 @@ tasks.test {
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="user" class="org.springframework.debug.User">
+	<bean id="user" class="org.springframework.debug.entity.User">
 		<property name="id"	value="1"/>
 		<property name="name" value="caychen"/>
 	</bean>

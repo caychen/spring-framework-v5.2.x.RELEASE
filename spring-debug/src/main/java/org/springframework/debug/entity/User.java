@@ -1,4 +1,4 @@
-package org.springframework.debug;
+package org.springframework.debug.entity;
 
 /**
  * @Author: Caychen
