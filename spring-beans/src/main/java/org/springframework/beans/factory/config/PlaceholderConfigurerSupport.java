@@ -219,6 +219,7 @@ public abstract class PlaceholderConfigurerSupport extends PropertyResourceConfi
 
 		String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
 		for (String curName : beanNames) {
+			// 遍历每个beanDefinition中的每个属性
 			// Check that we're not parsing our own bean definition,
 			// to avoid failing on unresolvable placeholders in properties file locations.
 			if (!(curName.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
@@ -233,9 +234,11 @@ public abstract class PlaceholderConfigurerSupport extends PropertyResourceConfi
 		}
 
 		// New in Spring 2.5: resolve placeholders in alias target names and aliases as well.
+		// 处理别名
 		beanFactoryToProcess.resolveAliases(valueResolver);
 
 		// New in Spring 3.0: resolve placeholders in embedded values such as annotation attributes.
+		// 处理内置的值，比如注解的属性值
 		beanFactoryToProcess.addEmbeddedValueResolver(valueResolver);
 	}
 
