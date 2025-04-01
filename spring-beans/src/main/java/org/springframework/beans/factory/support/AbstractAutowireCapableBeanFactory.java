@@ -184,6 +184,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	public AbstractAutowireCapableBeanFactory(@Nullable BeanFactory parentBeanFactory) {
 		this();
+		// 设置父容器
 		setParentBeanFactory(parentBeanFactory);
 	}
 
