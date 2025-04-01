@@ -246,6 +246,7 @@ class ConfigurationClassParser {
 		// Recursively process the configuration class and its superclass hierarchy.
 		SourceClass sourceClass = asSourceClass(configClass, filter);
 		do {
+			// 正式解析配置类
 			sourceClass = doProcessConfigurationClass(configClass, sourceClass, filter);
 		}
 		while (sourceClass != null);
@@ -269,6 +270,7 @@ class ConfigurationClassParser {
 		// 开始解析@Component注解，同时递归解析成员嵌套类，找到合适的配置类
 		if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
 			// Recursively process any member (nested) classes first
+			// 递归解析成员嵌套类，找到合适的配置类
 			processMemberClasses(configClass, sourceClass, filter);
 		}
 
@@ -303,6 +305,7 @@ class ConfigurationClassParser {
 					if (bdCand == null) {
 						bdCand = holder.getBeanDefinition();
 					}
+					// 再递归查找配置类进行解析
 					if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
 						parse(bdCand.getBeanClassName(), holder.getBeanName());
 					}
@@ -549,6 +552,7 @@ class ConfigurationClassParser {
 			throws IOException {
 
 		if (visited.add(sourceClass)) {
+			// 获取所有的注解
 			for (SourceClass annotation : sourceClass.getAnnotations()) {
 				String annName = annotation.getMetadata().getClassName();
 				if (!annName.equals(Import.class.getName())) {
@@ -595,6 +599,7 @@ class ConfigurationClassParser {
 							//否则，使用ImportSelector的selectImports方法获取导入的类名
 							String[] importClassNames = selector.selectImports(currentSourceClass.getMetadata());
 							Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames, exclusionFilter);
+							// 递归处理@Import注解
 							processImports(configClass, currentSourceClass, importSourceClasses, exclusionFilter, false);
 						}
 					}
@@ -614,6 +619,7 @@ class ConfigurationClassParser {
 						// 如果非ImportSelector，也不是ImportBeanDefinitionRegistrar，则直接当作Configuration配置类的形式进行下一轮处理
 						this.importStack.registerImport(
 								currentSourceClass.getMetadata(), candidate.getMetadata().getClassName());
+						// 递归
 						processConfigurationClass(candidate.asConfigClass(configClass), exclusionFilter);
 					}
 				}
