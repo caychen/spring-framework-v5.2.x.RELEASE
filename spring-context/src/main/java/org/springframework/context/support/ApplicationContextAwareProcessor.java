@@ -16,10 +16,6 @@
 
 package org.springframework.context.support;
 
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
@@ -32,6 +28,10 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringValueResolver;
+
+import java.security.AccessControlContext;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * {@link BeanPostProcessor} implementation that supplies the {@code ApplicationContext},
@@ -92,11 +92,13 @@ class ApplicationContextAwareProcessor implements BeanPostProcessor {
 
 		if (acc != null) {
 			AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+				// 执行Aware接口
 				invokeAwareInterfaces(bean);
 				return null;
 			}, acc);
 		}
 		else {
+			// 执行Aware接口
 			invokeAwareInterfaces(bean);
 		}
 
