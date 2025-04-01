@@ -226,6 +226,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Create a new AbstractApplicationContext with no parent.
 	 */
 	public AbstractApplicationContext() {
+		// 设置资源解析器
 		this.resourcePatternResolver = getResourcePatternResolver();
 	}
 
@@ -316,6 +317,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	@Override
 	public ConfigurableEnvironment getEnvironment() {
 		if (this.environment == null) {
+			// 获取环境变量，默认为StandardEnvironment
 			this.environment = createEnvironment();
 		}
 		return this.environment;
@@ -456,6 +458,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see org.springframework.core.io.support.PathMatchingResourcePatternResolver
 	 */
 	protected ResourcePatternResolver getResourcePatternResolver() {
+		// 创建ResourcePatternResolver对象，默认为PathMatchingResourcePatternResolver
 		return new PathMatchingResourcePatternResolver(this);
 	}
 
@@ -538,6 +541,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				// 6、完成Spring自带或者自定义的BeanPostProcessor的解析
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
@@ -609,6 +613,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment.
+		// 初始化属性源，默认为空
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable:
@@ -617,6 +622,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		getEnvironment().validateRequiredProperties();
 
 		// Store pre-refresh ApplicationListeners...
+		// 添加早期的应用监听器，在原生spring中默认为空，而在springboot中会从spring.factories中获取监听器
 		if (this.earlyApplicationListeners == null) {
 			this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
 		}
