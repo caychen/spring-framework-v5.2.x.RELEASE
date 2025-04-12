@@ -163,39 +163,50 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	/** Unique id for this context, if any. */
+	// 生成唯一id
+
 	private String id = ObjectUtils.identityToString(this);
 
 	/** Display name. */
 	private String displayName = ObjectUtils.identityToString(this);
 
 	/** Parent context. */
+	// 父容器
 	@Nullable
 	private ApplicationContext parent;
 
 	/** Environment used by this context. */
+	// 环境
+	// 默认是StandardEnvironment
 	@Nullable
 	private ConfigurableEnvironment environment;
 
 	/** BeanFactoryPostProcessors to apply on refresh. */
+	// 容器启动时需要执行的BeanFactoryPostProcessor集合
 	private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
 
 	/** System time in milliseconds when this context started. */
 	private long startupDate;
 
 	/** Flag that indicates whether this context is currently active. */
+	// 标识当前容器是否激活
 	private final AtomicBoolean active = new AtomicBoolean();
 
 	/** Flag that indicates whether this context has been closed already. */
+	// 标识当前容器是否关闭
 	private final AtomicBoolean closed = new AtomicBoolean();
 
 	/** Synchronization monitor for the "refresh" and "destroy". */
+	// 容器关闭和启动的同步锁
 	private final Object startupShutdownMonitor = new Object();
 
 	/** Reference to the JVM shutdown hook, if registered. */
+	// 容器关闭钩子函数
 	@Nullable
 	private Thread shutdownHook;
 
 	/** ResourcePatternResolver used by this context. */
+	// 资源解析器
 	private ResourcePatternResolver resourcePatternResolver;
 
 	/** LifecycleProcessor for managing the lifecycle of beans within this context. */
@@ -207,17 +218,21 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	private MessageSource messageSource;
 
 	/** Helper class used in event publishing. */
+	// 事件发布者
 	@Nullable
 	private ApplicationEventMulticaster applicationEventMulticaster;
 
 	/** Statically specified listeners. */
+	// 应用内事件监听器集合
 	private final Set<ApplicationListener<?>> applicationListeners = new LinkedHashSet<>();
 
 	/** Local listeners registered before refresh. */
+	// 容器启动时注册的事件监听器集合
 	@Nullable
 	private Set<ApplicationListener<?>> earlyApplicationListeners;
 
 	/** ApplicationEvents published before the multicaster setup. */
+	// 容器启动时发布的事件集合
 	@Nullable
 	private Set<ApplicationEvent> earlyApplicationEvents;
 
@@ -358,6 +373,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @param event the event to publish (may be application-specific or a
 	 * standard framework event)
 	 */
+	// 发布事件
 	@Override
 	public void publishEvent(ApplicationEvent event) {
 		publishEvent(event, null);
@@ -403,10 +419,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			this.earlyApplicationEvents.add(applicationEvent);
 		}
 		else {
+			// 发布事件
 			getApplicationEventMulticaster().multicastEvent(applicationEvent, eventType);
 		}
 
 		// Publish event via parent context as well...
+		// 如果有父级上下文，则也发布事件
 		if (this.parent != null) {
 			if (this.parent instanceof AbstractApplicationContext) {
 				((AbstractApplicationContext) this.parent).publishEvent(event, eventType);
@@ -422,6 +440,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @return the internal ApplicationEventMulticaster (never {@code null})
 	 * @throws IllegalStateException if the context has not been initialized yet
 	 */
+	// 获取当前上下文事件广播器
 	ApplicationEventMulticaster getApplicationEventMulticaster() throws IllegalStateException {
 		if (this.applicationEventMulticaster == null) {
 			throw new IllegalStateException("ApplicationEventMulticaster not initialized - " +
@@ -479,6 +498,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void setParent(@Nullable ApplicationContext parent) {
 		this.parent = parent;
 		if (parent != null) {
+			// 如果父级上下文不为空，并且父级上下文的环境是ConfigurableEnvironment类型，则合并环境变量
 			Environment parentEnvironment = parent.getEnvironment();
 			if (parentEnvironment instanceof ConfigurableEnvironment) {
 				getEnvironment().merge((ConfigurableEnvironment) parentEnvironment);
