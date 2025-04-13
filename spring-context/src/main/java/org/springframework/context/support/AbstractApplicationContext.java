@@ -603,6 +603,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				destroyBeans();
 
 				// Reset 'active' flag.
+				// 重置当前容器的状态标识
 				cancelRefresh(ex);
 
 				// Propagate exception to caller.
@@ -612,7 +613,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			finally {
 				// Reset common introspection caches in Spring's core, since we
 				// might not ever need metadata for singleton beans anymore...
-				// 13、清理一些缓存
+				// 13、清理缓存
 				resetCommonCaches();
 			}
 		}
